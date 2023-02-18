@@ -35,6 +35,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+
+  // Function to save a new task
   void saveTask() {
     setState(() {
       todoList.add([_textEditingController.text, false]);
@@ -42,6 +44,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // Builder
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +59,8 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(
-              Icons.account_circle,size: 39,
+              Icons.account_circle,
+              size: 39,
             ),
             tooltip: 'Pakcheek333',
             onPressed: () {
