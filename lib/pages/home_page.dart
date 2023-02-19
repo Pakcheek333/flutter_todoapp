@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+import '../data/database.dart';
 import '../utilities/input_box.dart';
 import '../utilities/todo_tile.dart';
 import 'dummy_page.dart';
@@ -12,36 +14,54 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _textEditingController = TextEditingController();
+  // 3. Reference the box
+  final _myBox = Hive.box('mybox');
 
-  // List to store data
-  List todoList = [
-    ['People', false],
-    ['know me as', false],
-    ['Pakcheek333', true],
-  ];
+  // 6. Reference class from database.dart
+  TodoDatabase db = TodoDatabase();
+
+  // 7. When the app first runs, do a couple checks
+  @override
+  void initState () {
+    
+    // Create the default data if the app runs for the first time
+    if (_myBox.get("TODOLIST") == null) {
+      db.createInitialData();
+    } else {
+      db.loadData();
+    }
+
+
+    super.initState();
+  }
+
+  // Text controller
+  final _textEditingController = TextEditingController();
 
   // Function to check & uncheck the checkbox
   void onChecked(bool? value, int index) {
     setState(() {
-      todoList[index][1] = !todoList[index][1];
+      db.todoList[index][1] = !db.todoList[index][1];
     });
+    db.updateData();
   }
 
   // Function to delete task
   void deleteTask(int index) {
     setState(() {
-      todoList.removeAt(index);
+      db.todoList.removeAt(index);
     });
+    db.updateData();
   }
 
 
   // Function to save a new task
   void saveTask() {
     setState(() {
-      todoList.add([_textEditingController.text, false]);
+      db.todoList.add([_textEditingController.text, false]);
       Navigator.of(context).pop();
     });
+    db.updateData();
   }
 
   // Builder
@@ -75,11 +95,11 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: ListView.builder(
-        itemCount: todoList.length,
+        itemCount: db.todoList.length,
         itemBuilder: (context, index) {
           return TodoTile(
-            text: todoList[index][0],
-            checkStatus: todoList[index][1],
+            text: db.todoList[index][0],
+            checkStatus: db.todoList[index][1],
             onChanged: (value) => onChecked(value, index),
             deleteFunction: (value) => deleteTask(index),
             editFunction: (value) {},
