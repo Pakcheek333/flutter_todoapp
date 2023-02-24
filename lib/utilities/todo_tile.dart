@@ -27,16 +27,19 @@ class TodoTile extends StatelessWidget {
         endActionPane: ActionPane(
           motion: const DrawerMotion(),
           children: [
-            SlidableAction(
-              onPressed: deleteFunction,
-              icon: Icons.delete,
-              backgroundColor: Colors.red.shade300,
-              borderRadius: BorderRadius.circular(12),
-            ),
+            // Edit action
             SlidableAction(
               onPressed: editFunction,
               icon: Icons.edit,
-              backgroundColor: Colors.green.shade300,
+              backgroundColor: Colors.green.shade200,
+              borderRadius: BorderRadius.circular(12),
+            ),
+
+            // Delete action
+            SlidableAction(
+              onPressed: deleteFunction,
+              icon: Icons.delete,
+              backgroundColor: Colors.red.shade200,
               borderRadius: BorderRadius.circular(12),
             ),
           ],
