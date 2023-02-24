@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class InputBox extends StatelessWidget {
+class InputBoxSave extends StatelessWidget {
   final TextEditingController textController;
   final VoidCallback onSave;
   final VoidCallback onCancel;
 
-  const InputBox({
+  const InputBoxSave({
     super.key,
     required this.textController,
     required this.onSave,
