@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../data/database.dart';
-import '../utilities/input_box.dart';
+import '../utilities/input_box_edit.dart';
+import '../utilities/input_box_save.dart';
 import '../utilities/todo_tile.dart';
 import 'dummy_page.dart';
 
@@ -22,15 +23,13 @@ class _HomePageState extends State<HomePage> {
 
   // 7. When the app first runs, do a couple checks
   @override
-  void initState () {
-    
+  void initState() {
     // Create the default data if the app runs for the first time
     if (_myBox.get("TODOLIST") == null) {
       db.createInitialData();
     } else {
       db.loadData();
     }
-
 
     super.initState();
   }
@@ -54,11 +53,21 @@ class _HomePageState extends State<HomePage> {
     db.updateData();
   }
 
-
   // Function to save a new task
   void saveTask() {
     setState(() {
       db.todoList.add([_textEditingController.text, false]);
+      Navigator.of(context).pop();
+      _textEditingController.clear();
+    });
+    db.updateData();
+  }
+
+  // Function to edit task
+  void editTask(int index) {
+    setState(() {
+      db.todoList.removeAt(index);
+      db.todoList.insert(index, [_textEditingController.text, false]);
       Navigator.of(context).pop();
     });
     db.updateData();
@@ -102,7 +111,18 @@ class _HomePageState extends State<HomePage> {
             checkStatus: db.todoList[index][1],
             onChanged: (value) => onChecked(value, index),
             deleteFunction: (value) => deleteTask(index),
-            editFunction: (value) {},
+            editFunction: (value) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return InputBoxEdit(
+                    textController: _textEditingController,
+                    onSave:() => editTask(index),
+                    onCancel: () => Navigator.of(context).pop(),
+                  );
+                },
+              );
+            },
           );
         },
       ),
@@ -111,7 +131,7 @@ class _HomePageState extends State<HomePage> {
           showDialog(
             context: context,
             builder: (context) {
-              return InputBox(
+              return InputBoxSave(
                 textController: _textEditingController,
                 onSave: saveTask,
                 onCancel: () => Navigator.of(context).pop(),
